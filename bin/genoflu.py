@@ -55,7 +55,7 @@ class Blast_Fasta(bcolors):
         self.sample_name = sample_name
         self.blast_db = blast_db
         blastout_file = f'{sample_name}_blast_out.txt'
-        os.system(f'blastn -query {FASTA} -db {blast_db} -word_size 11 -out {blastout_file} -outfmt "{format}" -num_alignments {num_alignment} -num_threads={num_threads}')
+        os.system(f'blastn -query {FASTA} -db {blast_db} -word_size 11 -out {blastout_file} -outfmt "{format}" -num_alignments {num_alignment} -num_threads={num_threads} 2> /dev/null')
         self.blastout_file = blastout_file
 
         blast_dict = defaultdict(list)
@@ -166,7 +166,7 @@ class GenoFLU():
         self.metadata_format_string = metadata_format_string
 
     def blast_hpai_genomes(self,):
-        os.system(f'cat {self.FASTA_dir}/*.fasta | makeblastdb -dbtype nucl -out hpai_geno_db -title hpai_geno_db')
+        os.system(f'cat {self.FASTA_dir}/*.fasta | makeblastdb -dbtype nucl -out hpai_geno_db -title hpai_geno_db > /dev/null 2>&1')
         blast_hpai_genotyping = Blast_Fasta(FASTA=self.FASTA, format="6 qseqid qseq length nident pident mismatch evalue bitscore sacc stitle", num_alignment=1, blast_db='hpai_geno_db', num_threads=2)
 
         blast_genotyping_hpia={}
@@ -307,8 +307,10 @@ if __name__ == "__main__": # execute if directly access by the interpreter
     parser.add_argument('-v', '--version', action='version', version=f'{os.path.basename(__file__)}: version {__version__}')
     args = parser.parse_args()
 
-    print(f'\n{os.path.basename(__file__)} SET ARGUMENTS:')
-    print(args)
+    print(f'\n{os.path.basename(__file__)} set arguements:\n')
+    for key, value in vars(args).items():
+        print(f'\t{key}:  {value}')
+    # print(args)
     print("\n")
 
     genoflu = GenoFLU(FASTA=args.FASTA, FASTA_dir=args.FASTA_dir, cross_reference=args.cross_reference, sample_name=args.sample_name, debug=args.debug)
@@ -333,8 +335,8 @@ if __name__ == "__main__": # execute if directly access by the interpreter
         pass
     excel_stats.post_excel()
     df = pd.read_excel(excel_stats.excel_filename, sheet_name="Sheet1")
-    df.to_csv(excel_stats.excel_filename.replace('.xlsx', '.tab'), sep='\t', index=False)
-    print(f'\nGenotype --> {excel_stats.excel_dict["Genotype"]}: {excel_stats.excel_dict["Genotype List Used, >=98%"]}\n')
+    df.to_csv(excel_stats.excel_filename.replace('.xlsx', '.tsv'), sep='\t', index=False)
+    print(f'\n{genoflu.sample_name} Genotype --> {excel_stats.excel_dict["Genotype"]}: {excel_stats.excel_dict["Genotype List Used, >=98%"]}\n')
 
     temp_dir = f'./{args.FASTA}.temp'
     if not os.path.exists(temp_dir):

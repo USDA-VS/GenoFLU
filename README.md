@@ -27,7 +27,7 @@ conda install -c bioconda blast
 conda install -c anaconda openpyxl
 ```
 
-## Available once repo is made public
+## Not yet available.  Will be available when repo is made public.
 ```
 conda install GenoFlU -c conda-forge -c bioconda
 ```
@@ -42,3 +42,13 @@ genoflu.py -f <*.fasta>
 # Output
 
 Genotype summary as Excel and tab delimited text file.
+
+# Test
+
+Test genome available at test/test-genome-A1.fasta
+
+```
+genoflu.py -f test-genome-A1.fasta
+```
+
+test-genome-A1 Genotype --> A1: PB2:ea1, PB1:ea1, PA:ea1, HA:ea1, NP:ea1, NA:ea1, MP:ea1, NS:ea1
