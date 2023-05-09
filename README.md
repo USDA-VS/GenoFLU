@@ -11,21 +11,16 @@ Clone this repository
 export PATH="<path to this clone repository>/GenoFLU/bin:$PATH"
 ```
 
-While in conda base, make new environment
+While in conda base, make new environment from .yml file in dependencies folder
 ```
-conda create --name genoflu
+conda env create -f <path to this clone repository>/GenoFLU/dependencies/genoflu.yml
 ```
+
 ```
 conda activate genoflu
 ```
 
-```
-conda install python=3.10
-conda install pandas
-conda install -c conda-forge biopython
-conda install -c bioconda blast
-conda install -c anaconda openpyxl
-```
+
 
 ## Not yet available.  Will be available when repo is made public.
 ```
