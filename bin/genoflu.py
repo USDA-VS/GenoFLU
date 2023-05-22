@@ -50,12 +50,13 @@ class Blast_Fasta(bcolors):
     ''' 
     '''
     def __init__(self, FASTA=None, format="6 qseqid sacc bitscore pident stitle", num_alignment=3, blast_db="nt", num_threads=8):
-        FASTA = os.path.basename(FASTA)
-        sample_name = re.sub('[_.].*', '', FASTA)
+        FASTA_abs_path = FASTA
+        FASTA_name = os.path.basename(FASTA_abs_path)
+        sample_name = re.sub('[_.].*', '', FASTA_name)
         self.sample_name = sample_name
         self.blast_db = blast_db
         blastout_file = f'{sample_name}_blast_out.txt'
-        os.system(f'blastn -query {FASTA} -db {blast_db} -word_size 11 -out {blastout_file} -outfmt "{format}" -num_alignments {num_alignment} -num_threads={num_threads} 2> /dev/null')
+        os.system(f'blastn -query {FASTA_abs_path} -db {blast_db} -word_size 11 -out {blastout_file} -outfmt "{format}" -num_alignments {num_alignment} -num_threads={num_threads} 2> /dev/null')
         self.blastout_file = blastout_file
 
         blast_dict = defaultdict(list)
@@ -129,12 +130,12 @@ class GenoFLU():
         Use file_setup to get the routine done
         '''
         self.debug = debug
-        self.FASTA = FASTA
-        FASTA = os.path.basename(FASTA)
+        self.FASTA_abs_path = FASTA
+        FASTA_name = os.path.basename(FASTA_abs_path)
         if sample_name:
             sample_name = sample_name
         else:
-            sample_name = re.sub('[_.].*', '', FASTA)
+            sample_name = re.sub('[_.].*', '', FASTA_name)
         self.sample_name = sample_name
 
         if FASTA_dir:
@@ -167,7 +168,7 @@ class GenoFLU():
 
     def blast_hpai_genomes(self,):
         os.system(f'cat {self.FASTA_dir}/*.fasta | makeblastdb -dbtype nucl -out hpai_geno_db -title hpai_geno_db > /dev/null 2>&1')
-        blast_hpai_genotyping = Blast_Fasta(FASTA=self.FASTA, format="6 qseqid qseq length nident pident mismatch evalue bitscore sacc stitle", num_alignment=1, blast_db='hpai_geno_db', num_threads=2)
+        blast_hpai_genotyping = Blast_Fasta(FASTA=self.FASTA_abs_path, format="6 qseqid qseq length nident pident mismatch evalue bitscore sacc stitle", num_alignment=1, blast_db='hpai_geno_db', num_threads=2)
 
         blast_genotyping_hpia={}
         fasta_name=""
@@ -313,7 +314,18 @@ if __name__ == "__main__": # execute if directly access by the interpreter
     # print(args)
     print("\n")
 
-    genoflu = GenoFLU(FASTA=args.FASTA, FASTA_dir=args.FASTA_dir, cross_reference=args.cross_reference, sample_name=args.sample_name, debug=args.debug)
+    # Get the absolute path to the file
+    FASTA_abs_path = os.path.abspath(args.FASTA)
+    try:
+        FASTA_dir = os.path.abspath(args.FASTA_dir)
+    except TypeError:
+        FASTA_dir = args.FASTA_dir
+    try:
+        cross_reference = os.path.abspath(args.cross_reference)
+    except TypeError:
+        cross_reference = args.cross_reference
+
+    genoflu = GenoFLU(FASTA=FASTA_abs_path, FASTA_dir=FASTA_dir, cross_reference=cross_reference, sample_name=args.sample_name, debug=args.debug)
     try:
         genoflu.get_metadata()
     except:
@@ -323,7 +335,8 @@ if __name__ == "__main__": # execute if directly access by the interpreter
     #Excel Stats
     excel_stats = Excel_Stats(genoflu.sample_name)
     genoflu.excel(excel_stats.excel_dict)
-    excel_stats.excel_dict["File Name"] = args.FASTA
+    FASTA_name = os.path.basename(FASTA_abs_path)
+    excel_stats.excel_dict["File Name"] = FASTA_name
     genoflu.excel_metadata(excel_stats.excel_dict)
     excel_stats.excel_dict["Genotype Average Depth of Coverage List"] = "Ran on FASTA - No Coverage Report"
     try: # reorder stats columns
@@ -338,7 +351,7 @@ if __name__ == "__main__": # execute if directly access by the interpreter
     df.to_csv(excel_stats.excel_filename.replace('.xlsx', '.tsv'), sep='\t', index=False)
     print(f'\n{genoflu.sample_name} Genotype --> {excel_stats.excel_dict["Genotype"]}: {excel_stats.excel_dict["Genotype List Used, >=98%"]}\n')
 
-    temp_dir = f'./{args.FASTA}.temp'
+    temp_dir = f'{FASTA_abs_path}.temp'
     if not os.path.exists(temp_dir):
         os.makedirs(temp_dir)
     files_grab = []
