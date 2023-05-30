@@ -4,32 +4,13 @@ This tool uses BLAST to identify segments from a curated database. Pre-defined g
 
 # Installation
 
-## GitHub install with necessary dependencies
-
-Clone this repository
-```
-export PATH="<path to this clone repository>/GenoFLU/bin:$PATH"
-```
-
-While in conda base, make new environment from .yml file in dependencies folder
-```
-conda env create -f <path to this clone repository>/GenoFLU/dependencies/genoflu.yml
-```
-
-```
-conda activate genoflu
-```
-
-
-
-## Not yet available.  Will be available when repo is made public.
 ```
 conda install GenoFlU -c conda-forge -c bioconda
 ```
 
 # Usage
 
-FASTA file containing a segmented influenza genome, with each segment having its own individually named header.
+FASTA file containing a single segmented influenza genome, with each segment having its own individually named header.
 ```
 genoflu.py -f <*.fasta>
 ```
