@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-__version__ = "1.0"
+__version__ = "1.01"
 
 import os
 import sys
@@ -131,7 +131,7 @@ class GenoFLU():
         '''
         self.debug = debug
         self.FASTA_abs_path = FASTA
-        FASTA_name = os.path.basename(FASTA_abs_path)
+        FASTA_name = os.path.basename(self.FASTA_abs_path)
         if sample_name:
             sample_name = sample_name
         else:
