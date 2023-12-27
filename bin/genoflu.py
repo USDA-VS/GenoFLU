@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-__version__ = "1.01"
+__version__ = "1.02"
 
 import os
 import sys
@@ -35,7 +35,7 @@ class Excel_Stats:
     def __init__(self, sample_name):
         self.sample_name = sample_name
         date_stamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-        self.excel_filename = f'{sample_name}_{date_stamp}_tb_rd.xlsx'
+        self.excel_filename = f'{sample_name}_{date_stamp}_stats.xlsx'
         excel_dict = {}
         excel_dict['sample'] = sample_name
         excel_dict['date'] = date_stamp
@@ -296,13 +296,21 @@ if __name__ == "__main__": # execute if directly access by the interpreter
     parser = argparse.ArgumentParser(prog='PROG', formatter_class=argparse.RawDescriptionHelpFormatter, description=textwrap.dedent('''\
 
     ---------------------------------------------------------
-    Place description
+    Usage:
+        genoflu.py -f sample.fasta # -i and -c are optional and default to genoflu/dependencies
+    -f is the input FASTA file which the genotype will be determined
+    -i is the directory containing FASTAs to BLAST against.  Headers must follow specific format.  "genotype<space>sample<space>gene"
+    -c is the excel file to cross-reference BLAST findings and identification to genotyping results.  Default genoflu/dependencies
+    -n is the sample name to force output files to this sample name versus taking the name to be anything before [_.]
+
+    Summary:
+        FASTA files with formated headers are used to build BLAST database.  The input FASTA is BLASTed against the database.  The top hit for each segment is used to determine the genotype.  The genotype is determined by cross-referencing the top hits to a excel file.  If the top hit for each segment matches a genotype, then the genotype is assigned.  If the top hit for each segment does not match a genotype, then the genotype is not assigned.  If the top hit for each segment matches a genotype, but the genotype is not complete (i.e. only 7 segments match), then the genotype is not assigned.  If the top hit for each segment matches a genotype, and the genotype is complete (i.e. all 8 segments match), then the genotype is assigned.  
 
     '''), epilog='''---------------------------------------------------------''')
 
     parser.add_argument('-f', '--fasta', action='store', dest='FASTA', required=True, help='Assembled FASTA')
     parser.add_argument('-i', '--FASTA_dir', action='store', dest='FASTA_dir', default=None, help='Directory containing FASTAs to BLAST against.  Headers must follow specific format.  genoflu/dependencies/fastas')
-    parser.add_argument('-c', '--cross_reference', action='store', dest='cross_reference', default=None, help='Excel file to cross-reference BLAST findings and identification to genotyping results.  Default genoflu/dependencies')
+    parser.add_argument('-c', '--cross_reference', action='store', dest='cross_reference', default=None, help='Excel file to cross-reference BLAST findings and identification to genotyping results.  Default genoflu/dependencies.  9 column Excel file, first column Genotype, followed by 8 columns for each segment and what those calls are for that genotype.')
     parser.add_argument('-n', '--sample_name', action='store', dest='sample_name', required=False, help='Force output files to this sample name')
     parser.add_argument('-d', '--debug', action='store_true', dest='debug', default=False, help='keep temp file')
     parser.add_argument('-v', '--version', action='version', version=f'{os.path.basename(__file__)}: version {__version__}')
