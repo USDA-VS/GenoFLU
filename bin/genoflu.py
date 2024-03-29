@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-__version__ = "1.02"
+__version__ = "1.03"
 
 import os
 import sys
@@ -132,6 +132,12 @@ class GenoFLU():
         self.debug = debug
         self.FASTA_abs_path = FASTA
         FASTA_name = os.path.basename(self.FASTA_abs_path)
+        with open(FASTA_name, 'r') as f:
+            fastas_in_file = 0
+            for line in f:
+                if line.startswith('>'):
+                    fastas_in_file += 1
+        self.fastas_in_file = fastas_in_file
         if sample_name:
             sample_name = sample_name
         else:
@@ -281,9 +287,9 @@ class GenoFLU():
             excel_dict['Genotype'] = self.result_genotyping_hpia['genotype']
         else:
             if segment_count == 8:
-                excel_dict['Genotype'] = "Not Assigned: No Matching Genotypes"
+                excel_dict['Genotype'] = "Not assigned: No Matching Genotypes"
             else:
-                excel_dict['Genotype'] = f'Not Assigned: Only {segment_count} Segments Found'
+                excel_dict['Genotype'] = f'Not assigned: Only {segment_count} segments >98% match found of total {self.fastas_in_file} segments in input file'
         excel_dict['Genotype List Used, >=98%'] = ', '.join(self.genotype_list_used)
         excel_dict['Genotype Sample Title List'] = ', '.join(full_sample_title)
         excel_dict['Genotype Percent Match List'] = ', '.join(pident_list)
