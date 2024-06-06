@@ -5,7 +5,7 @@ This tool uses BLAST to identify segments from a curated database. Pre-defined g
 # Installation
 
 ```
-conda install GenoFlU -c conda-forge -c bioconda
+conda create -c conda-forge -c bioconda -n genoflu genoflu
 ```
 
 # Usage
