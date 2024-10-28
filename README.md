@@ -12,7 +12,7 @@ Using GenoFLU, fully Eurasian and distinct introductions of H5 2.3.4.4b virus ar
 
 The GenoFLU tool is intended to identify the genotype of North American H5 2.3.4.4b viruses as well as providing information on individual segments when a sequence does not belong to a defined genotype. Input for the tool should be high quality, high coverage sequences with all eight segments present. The number of mixed bases should be low as mixed sequences may result in aberrant genotype calls. Both FASTQ and FASTA sequence data can be input into the tool; however, FASTA file input will not generate statistics on the average depth of coverage and care should be taken to utilize high quality consensus sequences.
 
-Within the [genotyping scheme](./docs/Genotyping_reference_for_US_H5_2.3.4.4b_10-21-2024.pdf), each segment has a set of reference “type” sequences for the segment, each assigned a unique number. Sequences that fall within 2% identity of the reference are called as that segment number. Each genotype is defined by the constellation of segment numbers.
+Within the [genotyping scheme](./docs/Genotyping_reference_for_US_H5_2.3.4.4b.pdf), each segment has a set of reference “type” sequences for the segment, each assigned a unique number. Sequences that fall within 2% identity of the reference are called as that segment number. Each genotype is defined by the constellation of segment numbers.
 
 ## Installation
 
