@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-__version__ = "1.05"
+__version__ = "1.06"
 
 import os
 import sys
@@ -136,11 +136,12 @@ class GenoFLU():
     ''' 
     '''
 
-    def __init__(self, FASTA=None, FASTA_dir=None, cross_reference=None, sample_name=None, debug=False):
+    def __init__(self, FASTA=None, FASTA_dir=None, pident_threshold=98.0, cross_reference=None, sample_name=None, debug=False):
         '''
         Use file_setup to get the routine done
         '''
         self.debug = debug
+        self.pident_threshold = float(pident_threshold)
         self.FASTA_abs_path = FASTA
         FASTA_name = os.path.basename(self.FASTA_abs_path)
         with open(FASTA_name, 'r') as f:
@@ -255,7 +256,7 @@ class GenoFLU():
                 sys.exit(
                     f'SEE TYPO in Database Input File with Header: {value["stitle"]}')
             # update excel print value if threshold changed
-            if float(blast_genotyping_hpia[gene]['pident']) >= 98.0:
+            if float(blast_genotyping_hpia[gene]['pident']) >= self.pident_threshold:
                 sample_dict[gene] = genotype
         matching_genotype = False
         for key, value in dictionary_of_genotypes.items():
@@ -312,14 +313,17 @@ class GenoFLU():
             if segment_count == 8:
                 excel_dict['Genotype'] = "Not assigned: No Matching Genotypes"
             else:
-                excel_dict['Genotype'] = f'Not assigned: Only {segment_count} segments >98% match found of total {self.fastas_in_file} segments in input file'
-        excel_dict['Genotype List Used, >=98%'] = ', '.join(
+                excel_dict['Genotype'] = f'Not assigned: Only {segment_count} segments >{str(self.pident_threshold)}% match found of total {self.fastas_in_file} segments in input file'
+        excel_dict[f'Genotype List Used, >={str(self.pident_threshold)}%'] = ', '.join(
             self.genotype_list_used)
         excel_dict['Genotype Sample Title List'] = ', '.join(full_sample_title)
         excel_dict['Genotype Percent Match List'] = ', '.join(pident_list)
         excel_dict['Genotype Mismatch List'] = ', '.join(mismatch_list)
         excel_dict['Genotype Average Depth of Coverage List'] = ', '.join(
             coverage_list)
+
+        genotype_list_used = next((excel_dict[key] for key in excel_dict if key.startswith("Genotype List Used")), None)
+        print(f'\n{self.sample_name} Genotype --> {excel_dict["Genotype"]}: {genotype_list_used} at percent identity at {self.pident_threshold}\n')
 
 
 if __name__ == "__main__":  # execute if directly access by the interpreter
@@ -342,6 +346,8 @@ if __name__ == "__main__":  # execute if directly access by the interpreter
                         dest='FASTA', required=True, help='Assembled FASTA')
     parser.add_argument('-i', '--FASTA_dir', action='store', dest='FASTA_dir', default=None,
                         help='Directory containing FASTAs to BLAST against.  Headers must follow specific format.  genoflu/dependencies/fastas')
+    parser.add_argument('-p', '--pident_threshold', action='store', dest='pident_threshold', default=98.0,
+                        help='BLAST result greater than or equal to this number gets genotype calls')
     parser.add_argument('-c', '--cross_reference', action='store', dest='cross_reference', default=None,
                         help='Excel file to cross-reference BLAST findings and identification to genotyping results.  Default genoflu/dependencies.  9 column Excel file, first column Genotype, followed by 8 columns for each segment and what those calls are for that genotype.')
     parser.add_argument('-n', '--sample_name', action='store', dest='sample_name',
@@ -369,7 +375,7 @@ if __name__ == "__main__":  # execute if directly access by the interpreter
     except TypeError:
         cross_reference = args.cross_reference
 
-    genoflu = GenoFLU(FASTA=FASTA_abs_path, FASTA_dir=FASTA_dir,
+    genoflu = GenoFLU(FASTA=FASTA_abs_path, FASTA_dir=FASTA_dir, pident_threshold=args.pident_threshold,
                       cross_reference=cross_reference, sample_name=args.sample_name, debug=args.debug)
     try:
         genoflu.get_metadata()
@@ -396,8 +402,6 @@ if __name__ == "__main__":  # execute if directly access by the interpreter
     df = pd.read_excel(excel_stats.excel_filename, sheet_name="Sheet1")
     df.to_csv(excel_stats.excel_filename.replace(
         '.xlsx', '.tsv'), sep='\t', index=False)
-    print(
-        f'\n{genoflu.sample_name} Genotype --> {excel_stats.excel_dict["Genotype"]}: {excel_stats.excel_dict["Genotype List Used, >=98%"]}\n')
 
     temp_dir = f'{FASTA_abs_path}.temp'
     if not os.path.exists(temp_dir):
