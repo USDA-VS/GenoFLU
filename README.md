@@ -21,7 +21,7 @@
 - **High Precision Matching**: Uses a 98% identity threshold to classify segments against reference types
 - **Reassortment Detection**: Identifies reassortment events between Eurasian and North American viruses
 - **Lineage Tracking**: Maintains genealogical relationships between different genotypes
-- **Flexible Input**: Accepts both FASTQ and FASTA sequence data
+- **Input**: Accepts FASTA sequence data
 - **Transparent Results**: Provides detailed match statistics for each segment
 - **Real-time Surveillance**: Supports ongoing monitoring of emerging genotypes
 - **Host Species Analysis**: Tracks virus spread across avian and mammalian hosts
