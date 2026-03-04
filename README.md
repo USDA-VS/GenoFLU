@@ -42,7 +42,7 @@ GenoFLU uses a systematic approach to classify H5N1 viruses:
 This system ensures that viruses sharing a common lineage can be logically classified (e.g., B3 genotypes include 13 distinct reassortants, B3.1 to B3.13).
 
 <p align="center">
-  <img src="./docs/migratory_bird_genotypes_table.pdf" alt="Migratory bird GenoFLU genotypes table" width="650"/>
+  <img src="./docs/migratory_bird_genotypes_table.png" alt="Migratory bird GenoFLU genotypes table" width="650"/>
 </p>
 <b>Table 1:</b>  H5 clade 2.3.4.4b GenoFlu genotypes by overall percent, dates of detection, and flyway distribution as of 1 February 2026 (<i>does not include dairy events for B3.13 and D1.1</i>). Includes detections in wild migratory birds, poultry species and non-dairy mammals; only one sequence per poultry premises was included to represent the premises. Genotypes are Eurasian H5 and N1 unless otherwise noted.  Genotypes identified in 2025-26 are highlighted GREEN. NOTE: <i>The dairy cattle event genotypes B3.13 and D1.1 are not represented as these events are not mediated by virus from wild migratory waterfowl</i>.     
 
