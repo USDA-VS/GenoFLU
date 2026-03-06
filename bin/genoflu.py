@@ -144,7 +144,7 @@ class GenoFLU():
         self.pident_threshold = float(pident_threshold)
         self.FASTA_abs_path = FASTA
         FASTA_name = os.path.basename(self.FASTA_abs_path)
-        with open(FASTA_name, 'r') as f:
+        with open(self.FASTA_abs_path, 'r') as f:
             fastas_in_file = 0
             for line in f:
                 if line.startswith('>'):
