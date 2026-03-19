@@ -89,7 +89,7 @@ GenoFLU uses BLAST to compare each segment of your influenza genome against a cu
 1. **Database Creation**: The tool builds a BLAST database from reference sequences where each segment has a specific genotype identifier
 2. **Sequence Alignment**: Your input FASTA is aligned against this database using BLAST
 3. **Segment Classification**: Each segment is assigned to a reference "type" if it shows ≥98% identity (configurable with `-p` flag)
-4. **Genotype Matching**: The genotyping scheme of segment types is compared against a [reference table](./docs/Genotyping_reference_for_US_H5_2.3.4.4b.pdf) of known genotypes
+4. **Genotype Matching**: The genotyping scheme of segment types is compared against a [reference table](./docs/Genotyping_reference_for_US_H5_2.3.4.4b_v2.pdf) of known genotypes
 5. **Result Generation**: The tool outputs the genotype if all segments match a known genotyping scheme, or provides detailed information about which segments matched/didn't match
 
 Within the genotyping scheme, each segment has reference "type" sequences assigned unique numbers. A complete genotype is defined by its unique genotyping scheme of all eight segment numbers.
